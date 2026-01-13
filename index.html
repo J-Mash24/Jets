@@ -15,21 +15,6 @@
       font-family: 'Press Start 2P', monospace;
       text-align: center;
     }
-    .menu-preview {
-  margin-top: 30px;
-  width: 90%;
-  max-width: 900px;
-  border: 4px solid white;
-  image-rendering: pixelated;
-}
-
-    .banner-image {
-  width: 100%;
-  max-height: 260px;
-  object-fit: cover;
-  image-rendering: pixelated;
-  border-bottom: 4px solid white;
-}
 
     h1 {
       margin-top: 40px;
@@ -63,11 +48,49 @@
       display: block;
     }
 
+    /* ---------- MENU IMAGE ---------- */
+    .menu-preview {
+      margin-top: 30px;
+      width: 90%;
+      max-width: 900px;
+      border: 4px solid white;
+      image-rendering: pixelated;
+    }
+
+    /* ---------- STAT IMAGES ---------- */
     .stat-image {
       width: 90%;
       max-width: 1000px;
       border: 4px solid white;
       margin-bottom: 30px;
+      cursor: zoom-in;
+      image-rendering: pixelated;
+      transition: transform 0.2s;
+    }
+
+    .stat-image:hover {
+      transform: scale(1.02);
+    }
+
+    /* ---------- IMAGE MODAL ---------- */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal img {
+      max-width: 95%;
+      max-height: 95%;
+      border: 6px solid white;
+      image-rendering: pixelated;
     }
   </style>
 </head>
@@ -82,26 +105,22 @@
   <button onclick="showScreen('players')">PLAYER STATS</button>
   <button onclick="showScreen('goalies')">GOALIE STATS</button>
   <button onclick="showScreen('story')">STORY</button>
-  
+
   <button onclick="toggleMusic()" id="music-btn">🔊 MUSIC ON</button>
 
-
-  <!-- IMAGE BELOW BUTTONS -->
   <img src="logo1.png" class="menu-preview" alt="NHL 95 Style">
 </div>
-
-
 
 <!-- ================= TEAM STATS ================= -->
 <div id="team" class="screen">
   <h2>TEAM STATS</h2>
 
-  <img src="jets_GS_GA.png" class="stat-image">
-  <img src="jets_W_L.png" class="stat-image">
-  <img src="jets_gpg.png" class="stat-image">
-  <img src="jets_gap.png" class="stat-image">
-  <img src="jets_shots.png" class="stat-image">
-  <img src="jets_shots_against.png" class="stat-image">
+  <img src="jets_GS_GA.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="jets_W_L.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="jets_gpg.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="jets_gap.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="jets_shots.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="jets_shots_against.png" class="stat-image" onclick="openModal(this.src)">
 
   <button onclick="showScreen('menu')">⬅ BACK</button>
 </div>
@@ -110,13 +129,13 @@
 <div id="players" class="screen">
   <h2>PLAYER STATS</h2>
 
-  <img src="jets_GA_players.png" class="stat-image">
-  <img src="jets_best_seasons.png" class="stat-image">
-  <img src="jets_best_individual_seasons_1996.png" class="stat-image">
-  <img src="blake_player_card_final.png" class="stat-image">
-  <img src="ehlers_player_card_final.png" class="stat-image">
-  <img src="wheeler_player_card_final.png" class="stat-image">
-  <img src="connor_player_card_final.png" class="stat-image">
+  <img src="jets_GA_players.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="jets_best_seasons.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="jets_best_individual_seasons_1996.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="blake_player_card_final.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="ehlers_player_card_final.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="wheeler_player_card_final.png" class="stat-image" onclick="openModal(this.src)">
+  <img src="connor_player_card_final.png" class="stat-image" onclick="openModal(this.src)">
 
   <button onclick="showScreen('menu')">⬅ BACK</button>
 </div>
@@ -125,7 +144,7 @@
 <div id="goalies" class="screen">
   <h2>GOALIE STATS</h2>
 
-  <img src="best_jets_goalies.png" class="stat-image">
+  <img src="best_jets_goalies.png" class="stat-image" onclick="openModal(this.src)">
 
   <button onclick="showScreen('menu')">⬅ BACK</button>
 </div>
@@ -134,43 +153,53 @@
 <div id="story" class="screen">
   <h2>STORY</h2>
 
-  <img src="nhl95_story_screen.png" class="stat-image">
+  <img src="nhl95_story_screen.png" class="stat-image" onclick="openModal(this.src)">
 
   <button onclick="showScreen('menu')">⬅ BACK</button>
 </div>
 
+<!-- ================= IMAGE MODAL ================= -->
+<div id="image-modal" class="modal" onclick="closeModal()">
+  <img id="modal-img">
+</div>
+
+<!-- ================= AUDIO ================= -->
 <audio id="bg-music" loop>
   <source src="NHL '95 Intro.mp3" type="audio/mpeg">
 </audio>
 
-
-
-
 <!-- ================= JAVASCRIPT ================= -->
 <script>
+/* -------- SCREEN NAVIGATION -------- */
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(
     screen => screen.classList.remove('active')
   );
-
-  const target = document.getElementById(id);
-  if (target) {
-    target.classList.add('active');
-  } else {
-    console.error("No screen with id:", id);
-  }
+  document.getElementById(id).classList.add('active');
 }
 
+/* -------- IMAGE MODAL -------- */
+function openModal(src) {
+  document.getElementById("modal-img").src = src;
+  document.getElementById("image-modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("image-modal").style.display = "none";
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeModal();
+});
+
+/* -------- MUSIC -------- */
 const music = document.getElementById("bg-music");
 const musicBtn = document.getElementById("music-btn");
 
-music.volume = 0.4; // NHL-95 friendly volume
+music.volume = 0.4;
 
-// Start music on first user interaction (browser rule)
 document.addEventListener("click", () => {
-  if (music.paused) {
-    music.play();
-  }
+  if (music.paused) music.play();
 }, { once: true });
 
 function toggleMusic() {
@@ -182,9 +211,7 @@ function toggleMusic() {
     musicBtn.textContent = "🔇 MUSIC OFF";
   }
 }
-
 </script>
-
 
 </body>
 </html>
